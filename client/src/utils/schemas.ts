@@ -5,6 +5,6 @@ export const AUTH_SCHEMA = Yup.object().shape({
     .email("E-mail inválido")
     .required("E-mail precisa ser preenchido"),
   password: Yup.string()
-    .min(8, "A senha precisa conter no minímo 8 caracteres")
-    .required("Senha precisa ser preenchida"),
+    .required("Senha precisa ser preenchida")
+    .min(8, "A senha precisa conter no minímo 8 caracteres"),
 });
