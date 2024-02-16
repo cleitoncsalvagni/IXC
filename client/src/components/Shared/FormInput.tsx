@@ -59,6 +59,7 @@ export const FormInput: React.FC<InputProps> = ({
   const containerClassName = classNames?.container || "";
 
   const hasContainerBg = containerClassName.includes("bg");
+  const hasContainerBorder = containerClassName.includes("border");
   const hasContainerDimensions =
     containerClassName.includes("h-") || containerClassName.includes("w-");
 
@@ -68,7 +69,9 @@ export const FormInput: React.FC<InputProps> = ({
 
   const containerConditionalClasses = `${
     !hasContainerDimensions && "h-[3.2rem]"
-  } ${!hasContainerBg && "bg-zinc-100"} ${hasError ? "border-red-500" : ""}`;
+  } ${!hasContainerBg && "bg-zinc-100"} ${hasError && "border-red-500"} ${
+    !hasContainerBorder && "border-transparent"
+  }`;
 
   const inputBaseClass = `h-full w-full bg-transparent text-sm focus:outline-none  ${classNames?.input}`;
 
@@ -86,7 +89,7 @@ export const FormInput: React.FC<InputProps> = ({
       )}
 
       <div
-        className={`flex items-center rounded-md border-2 px-2 transition-transform focus-within:border-black  border-transparent  ${containerConditionalClasses} ${containerClassName}`}
+        className={`flex items-center rounded-md border-2 px-2 transition-transform focus-within:border-black  ${containerConditionalClasses} ${containerClassName}`}
       >
         {left ? (
           <RenderIcon icon={left} className={classNames?.left} isLeft />
@@ -96,7 +99,6 @@ export const FormInput: React.FC<InputProps> = ({
           <textarea
             required={required}
             className={`${inputBaseClass} resize-none`}
-            maxLength={300}
             onChange={onChange}
             {...yupRegister}
             {...inputProps}
