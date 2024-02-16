@@ -3,7 +3,7 @@ import { FormInput } from "../Shared/FormInput";
 
 export const ConversationFooter = () => {
   return (
-    <div className="flex flex-col items-center bg-red-500 p-5">
+    <div className="flex flex-col items-center bg-zinc-100 p-5">
       <FormInput
         multipleLines
         placeholder="Digite sua mensagem aqui"

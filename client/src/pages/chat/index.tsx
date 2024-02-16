@@ -18,7 +18,7 @@ const Chat: React.FC = () => {
     <div
       className={`flex min-h-screen flex-col items-center justify-center ${inter.className}`}
     >
-      <div className="flex flex-col bg-white w-8/12 rounded-2xl shadow-xl divide-y-1 divide-zinc-100 h-[80vh]">
+      <div className="flex flex-col bg-white w-8/12 rounded-2xl shadow-xl divide-y-1 divide-zinc-100 min-h-[50vh]">
         <ChatHeader />
 
         <div className="flex h-full divide-x-1 divide-zinc-100">

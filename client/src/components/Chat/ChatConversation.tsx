@@ -7,7 +7,7 @@ export const ChatConversation: React.FC = () => {
     <div className="flex flex-col w-full">
       <ConversationHeader />
 
-      <div className="flex flex-1 flex-col overflow-y-scroll bg-zinc-100">
+      <div className="flex flex-col overflow-y-scroll bg-zinc-100 h-[50vh]">
         {mockConversation.map((item, index) => {
           const sendBySelf = item.sender_id === 1;
 
