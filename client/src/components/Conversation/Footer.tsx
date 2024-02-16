@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import { FormInput } from "../Shared/FormInput";
 
 const schema = Yup.object().shape({
-  chatMessage: Yup.string().required("Campo obrigatório"),
+  chatMessage: Yup.string().required(),
 });
 
 export const ConversationFooter: React.FC = () => {
@@ -33,7 +33,6 @@ export const ConversationFooter: React.FC = () => {
             value={value}
             onChange={onChange}
             placeholder="Digite sua mensagem aqui"
-            errorMessage={errors.chatMessage?.message}
             classNames={{
               container: "border-zinc-200 h-32 bg-white",
               input: "p-2",
