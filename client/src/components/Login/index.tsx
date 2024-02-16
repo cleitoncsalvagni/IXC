@@ -1,9 +1,9 @@
+import { AUTH_SCHEMA } from "@/utils/schemas";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Checkbox } from "@nextui-org/react";
 import { useState } from "react";
 import { ArrowRight, Lock, Mail } from "react-feather";
 import { Controller, useForm } from "react-hook-form";
-import * as Yup from "yup";
 import { AuthHeader } from "../Shared/AuthHeader";
 import { FormInput } from "../Shared/FormInput";
 import { VisibilityPassSwitch } from "../Shared/VisibilityPassSwitch";
@@ -11,15 +11,6 @@ import { VisibilityPassSwitch } from "../Shared/VisibilityPassSwitch";
 interface LoginProps {
   setContentMode: (mode: "login" | "register") => void;
 }
-
-const schema = Yup.object().shape({
-  email: Yup.string()
-    .email("E-mail inválido")
-    .required("E-mail precisa ser preenchido"),
-  password: Yup.string()
-    .min(8, "A senha precisa conter no minímo 8 caracteres")
-    .required("Senha precisa ser preenchida"),
-});
 
 export const Login: React.FC<LoginProps> = ({ setContentMode }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -30,7 +21,7 @@ export const Login: React.FC<LoginProps> = ({ setContentMode }) => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver<AuthSchema>(schema),
+    resolver: yupResolver<AuthSchema>(AUTH_SCHEMA),
   });
 
   function handleLogin(info: { email: string; password: string }) {

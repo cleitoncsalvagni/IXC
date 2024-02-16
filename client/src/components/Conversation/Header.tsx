@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-export const ConversationHeader = () => {
+export const ConversationHeader: React.FC = () => {
   return (
     <div className="p-5 py-3 flex items-center ">
       <Image
