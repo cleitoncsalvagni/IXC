@@ -82,4 +82,43 @@ const register = async (req: Request, res: Response) => {
   }
 };
 
-export { login, register };
+const findAllUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await userModel.find();
+
+    res.status(200).json({
+      error: false,
+      users,
+    });
+  } catch (error: any) {
+    res.status(500).json({ error });
+  }
+};
+
+const findUser = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await userModel.findById(userId);
+
+    if (!user) {
+      return res.status(200).json({
+        error: true,
+        message: "Usuário não encontrado!",
+      });
+    }
+
+    res.status(200).json({
+      error: false,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
+    });
+  } catch (error: any) {
+    res.status(500).json({ error });
+  }
+};
+
+export { findAllUsers, findUser, login, register };

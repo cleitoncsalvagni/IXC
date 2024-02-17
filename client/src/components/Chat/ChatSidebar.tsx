@@ -1,14 +1,16 @@
+import { useFetchRecipientUser } from "@/hooks/useFetchRecipientUser";
+import { useChat } from "@/providers/chat";
+import { Spinner } from "@nextui-org/react";
 import Image from "next/image";
+import { Send } from "react-feather";
 
-const RenderChat = ({
-  isSelected,
-  sentByMe,
-  message,
-}: {
-  message: string;
-  isSelected?: boolean;
-  sentByMe?: boolean;
-}) => {
+const RenderChat = ({ chat }: { chat: Chat }) => {
+  const { recipientUser } = useFetchRecipientUser(chat);
+
+  const sentByMe = false;
+  const isSelected = false;
+  const message = "";
+
   return (
     <div
       className={`flex items-center break-all cursor-pointer rounded-3xl p-3 px-4 ${
@@ -24,7 +26,7 @@ const RenderChat = ({
       />
 
       <div className="flex flex-1 flex-col ml-3">
-        <h1 className="line-clamp-1">Ana da Silva</h1>
+        <h1 className="line-clamp-1">{recipientUser?.name}</h1>
         <p
           className={`line-clamp-1 text-xs text-zinc-400 ${
             sentByMe && "italic"
@@ -37,15 +39,59 @@ const RenderChat = ({
   );
 };
 
-export const ChatSidebar: React.FC = () => {
+const RenderPotentialChats = ({
+  potentialChats,
+}: {
+  potentialChats: PotentialChat[];
+}) => {
   return (
-    <div className="flex flex-col w-5/12  p-5 items-center gap-3">
-      <RenderChat
-        isSelected
-        sentByMe
-        message="Sim estou fazendo aquelas atividades pendentes"
-      />
-      <RenderChat message="Vou verificar e já te aviso" />
+    <div className="flex flex-col w-full">
+      <div className="flex items-center gap-1 mb-1">
+        <Send size={15} className="text-primary" />
+        <h1 className="text-xs font-medium text-primary">
+          Contatos disponíveis
+        </h1>
+      </div>
+      <div className="flex items-center gap-2 flex-wrap my-2">
+        {potentialChats
+          .sort((a, b) => a.name.localeCompare(b.name))
+          ?.map((chat, index) => (
+            <div
+              key={index}
+              className="flex items-center break-all cursor-pointer border p-1 px-2 shadow-md rounded-full border-zinc-300"
+            >
+              <h1 className="line-clamp-1 text-xs">{chat.name}</h1>
+            </div>
+          ))}
+      </div>
+    </div>
+  );
+};
+
+export const ChatSidebar: React.FC = () => {
+  const { userChat, isLoadingChats, potentialChats } = useChat();
+
+  return (
+    <div className="flex flex-col w-5/12 p-5 items-center gap-3 ">
+      {isLoadingChats ? (
+        <Spinner />
+      ) : (
+        <>
+          {potentialChats && potentialChats?.length > 0 ? (
+            <RenderPotentialChats potentialChats={potentialChats} />
+          ) : null}
+
+          {userChat && userChat?.length > 0 ? (
+            userChat?.map((chat, index) => (
+              <RenderChat key={index} chat={chat} />
+            ))
+          ) : (
+            <p className="text-xs text-zinc-400 mt-10">
+              Você ainda não começou nenhuma conversa. 👀
+            </p>
+          )}
+        </>
+      )}
     </div>
   );
 };
