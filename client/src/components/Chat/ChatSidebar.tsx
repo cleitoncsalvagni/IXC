@@ -49,7 +49,7 @@ const RenderPotentialChats = ({
   potentialChats?: PotentialChat[];
 }) => {
   const { user } = useAuth();
-  const { handleCreateChat } = useChat();
+  const { handleCreateChat, onlineUsers } = useChat();
 
   return (
     <div className="flex flex-col w-full">
@@ -63,15 +63,19 @@ const RenderPotentialChats = ({
         {potentialChats && potentialChats?.length > 0 ? (
           potentialChats
             .sort((a, b) => a.name.localeCompare(b.name))
-            ?.map((chat, index) => (
+            ?.map((u, index) => (
               <div
                 key={index}
                 onClick={() =>
-                  handleCreateChat({ firstId: user?.id!, secondId: chat._id })
+                  handleCreateChat({ firstId: user?.id!, secondId: u._id })
                 }
                 className="flex items-center break-all cursor-pointer border p-1 px-2 shadow-md rounded-full border-zinc-300"
               >
-                <h1 className="line-clamp-1 text-xs">{chat.name}</h1>
+                <h1 className="line-clamp-1 text-xs">{u.name}</h1>
+
+                {onlineUsers?.some((user) => user.userId === u._id) && (
+                  <div className="flex w-2 h-2 rounded-full bg-green-500 ml-1" />
+                )}
               </div>
             ))
         ) : (

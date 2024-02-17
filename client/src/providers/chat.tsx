@@ -11,6 +11,7 @@ import {
   useState,
 } from "react";
 import toast from "react-hot-toast";
+import { io } from "socket.io-client";
 import { useAuth } from "./auth";
 
 interface ChatContext {
@@ -24,6 +25,12 @@ interface ChatContext {
   isLoadingMessages: boolean;
   currentChat: Chat | undefined;
   handleSendMessage: (data: CreateMessage) => void;
+  onlineUsers: OnlineUser[];
+}
+
+interface OnlineUser {
+  userId: string;
+  socketId: string;
 }
 
 interface ChatID {
@@ -46,9 +53,29 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [currentChat, setCurrentChat] = useState<Chat | undefined>();
   const [messages, setMessages] = useState<Message[] | undefined>([]);
   const [newMessages, setNewMessages] = useState<Message | undefined>();
+  const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([]);
+  const [socket, setSocket] = useState<any>();
   const [potentialChats, setPotentialChats] = useState<
     PotentialChat[] | undefined
   >([]);
+
+  useEffect(() => {
+    const newSocket = io("http://127.0.0.1:5173");
+    setSocket(newSocket);
+
+    return () => {
+      newSocket?.disconnect();
+    };
+  }, [user]);
+
+  useEffect(() => {
+    if (socket && user) {
+      socket.emit("addNewUser", user?.id);
+      socket.on("getOnlineUsers", (users: OnlineUser[]) => {
+        setOnlineUsers(users);
+      });
+    }
+  }, [socket, user]);
 
   const { mutate: createChatMutation } = useMutation(
     (data: ChatID) => createChat(data),
@@ -183,6 +210,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         userChat,
         currentChat,
         setUserChat,
+        onlineUsers,
         potentialChats,
         handleCreateChat,
         handleSendMessage,
