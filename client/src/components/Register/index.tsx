@@ -1,7 +1,7 @@
-import { AUTH_SCHEMA } from "@/utils/schemas";
+import { REGISTER_SCHEMA } from "@/utils/schemas";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
-import { Lock, Mail } from "react-feather";
+import { Lock, Mail, User } from "react-feather";
 import { Controller, useForm } from "react-hook-form";
 import { AuthHeader } from "../Shared/AuthHeader";
 import { FormInput } from "../Shared/FormInput";
@@ -9,6 +9,12 @@ import { VisibilityPassSwitch } from "../Shared/VisibilityPassSwitch";
 
 interface RegisterProps {
   setContentMode: (mode: "login" | "register") => void;
+}
+
+interface RegisterSchema {
+  name: string;
+  email: string;
+  password: string;
 }
 
 export const Register: React.FC<RegisterProps> = ({ setContentMode }) => {
@@ -19,11 +25,11 @@ export const Register: React.FC<RegisterProps> = ({ setContentMode }) => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver<AuthSchema>(AUTH_SCHEMA),
+    resolver: yupResolver<RegisterSchema>(REGISTER_SCHEMA),
   });
 
-  function handleRegister(info: { email: string; password: string }) {
-    console.log(info);
+  function handleRegister({ name, email, password }: RegisterSchema) {
+    console.log(name, email, password);
   }
 
   const handleVisiblePassword = () => {
@@ -38,7 +44,24 @@ export const Register: React.FC<RegisterProps> = ({ setContentMode }) => {
           subtitle="Comece a usar nossos serviços agora mesmo!"
         />
 
-        <div className="flex flex-col my-10 gap-2">
+        <div className="flex flex-col my-10 gap-3">
+          <Controller
+            name="name"
+            defaultValue=""
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <FormInput
+                type="text"
+                label="Nome"
+                value={value}
+                onChange={onChange}
+                placeholder="Insira seu nome"
+                errorMessage={errors.name?.message}
+                left={<User size={18} />}
+              />
+            )}
+          />
+
           <Controller
             name="email"
             defaultValue=""

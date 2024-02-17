@@ -11,7 +11,7 @@ const RenderChat = ({
 }) => {
   return (
     <div
-      className={`flex items-center break-all  rounded-3xl p-3 px-4 ${
+      className={`flex items-center break-all cursor-pointer rounded-3xl p-3 px-4 ${
         isSelected ? "bg-blue-100" : "bg-zinc-100"
       } min-w-full`}
     >

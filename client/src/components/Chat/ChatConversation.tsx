@@ -1,13 +1,22 @@
 import { mockConversation } from "@/mocks/chat";
+import { useEffect } from "react";
 import { ConversationFooter } from "../Conversation/Footer";
 import { ConversationHeader } from "../Conversation/Header";
 
 export const ChatConversation: React.FC = () => {
+  useEffect(() => {
+    const conversation = document.getElementById("conversations");
+    conversation?.scrollTo(0, conversation.scrollHeight);
+  }, []);
+
   return (
     <div className="flex flex-col w-full">
       <ConversationHeader />
 
-      <div className="flex flex-col overflow-y-scroll bg-zinc-100 h-[50vh]">
+      <div
+        id="conversations"
+        className="flex flex-col overflow-y-scroll bg-zinc-100 h-[50vh]"
+      >
         {mockConversation.map((item, index) => {
           const sendBySelf = item.sender_id === 1;
 

@@ -1,6 +1,9 @@
+import { useAuth } from "@/providers/auth";
 import Image from "next/image";
 
 export const ChatHeader: React.FC = () => {
+  const { user } = useAuth();
+
   return (
     <div className="flex items-center justify-between p-5 py-3 shadow">
       <div>
@@ -9,8 +12,8 @@ export const ChatHeader: React.FC = () => {
 
       <div className="flex items-center">
         <div className="flex flex-col items-end">
-          <p className="font-medium">Fulano de tal</p>
-          <p className="text-sm text-zinc-400">fulanodetal@gmail.com</p>
+          <p className="font-medium">{user?.name}</p>
+          <p className="text-sm text-zinc-400">{user?.email}</p>
         </div>
 
         <Image

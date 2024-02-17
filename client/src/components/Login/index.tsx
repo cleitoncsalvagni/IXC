@@ -1,6 +1,7 @@
-import { AUTH_SCHEMA } from "@/utils/schemas";
+import { useAuth } from "@/providers/auth";
+import { LOGIN_SCHEMA } from "@/utils/schemas";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Checkbox } from "@nextui-org/react";
+import { Checkbox, Spinner } from "@nextui-org/react";
 import { useState } from "react";
 import { ArrowRight, Lock, Mail } from "react-feather";
 import { Controller, useForm } from "react-hook-form";
@@ -12,7 +13,13 @@ interface LoginProps {
   setContentMode: (mode: "login" | "register") => void;
 }
 
+interface LoginSchema {
+  email: string;
+  password: string;
+}
+
 export const Login: React.FC<LoginProps> = ({ setContentMode }) => {
+  const { handleLogin, isLoginLoading } = useAuth();
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [saveLogin, setSaveLogin] = useState(true);
 
@@ -21,18 +28,8 @@ export const Login: React.FC<LoginProps> = ({ setContentMode }) => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver<AuthSchema>(AUTH_SCHEMA),
+    resolver: yupResolver<LoginSchema>(LOGIN_SCHEMA),
   });
-
-  function handleLogin(info: { email: string; password: string }) {
-    const params = {
-      email: info.email,
-      password: info.password,
-      mustSaveLogin: saveLogin ? 1 : 0,
-    };
-
-    console.log(params);
-  }
 
   const handleVisiblePassword = () => {
     setPasswordVisible((prev) => !prev);
@@ -96,13 +93,20 @@ export const Login: React.FC<LoginProps> = ({ setContentMode }) => {
           </Checkbox>
 
           <button
+            disabled={isLoginLoading}
             onClick={handleSubmit(handleLogin)}
-            className="group flex items-center justify-center gap-3 border-1 border-black rounded-full py-1 mt-2 hover:scale-105 transition-transform"
+            className="group flex items-center justify-center gap-3 border-1 border-black rounded-full py-1 mt-2 hover:scale-105 transition-transform min-h-9"
           >
-            <p className="font-semibold">Acessar</p>
-            <div className="flex group transition-transform transform group-hover:translate-x-2">
-              <ArrowRight size={18} />
-            </div>
+            {isLoginLoading ? (
+              <Spinner color="current" size="sm" />
+            ) : (
+              <>
+                <p className="font-semibold">Acessar</p>
+                <div className="flex group transition-transform transform group-hover:translate-x-2">
+                  <ArrowRight size={18} />
+                </div>
+              </>
+            )}
           </button>
         </div>
       </div>
