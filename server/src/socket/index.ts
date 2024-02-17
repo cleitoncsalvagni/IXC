@@ -36,11 +36,21 @@ const removeUser = (socket: SocketType) => {
   getOnlineUsers();
 };
 
-export const createSocketServer = () => {
-  console.log("Socket server running on port 5173");
+const sendMessage = (message: Message) => {
+  const user = onlineUsers.find((user) => user.userId === message.recipientId);
 
+  if (user) {
+    io.to(user.socketId).emit("getMessage", message);
+  }
+};
+
+export const createSocketServer = () => {
   io.on("connection", (socket) => {
     addNewUser(socket);
+
+    socket.on("sendMessage", (message) => {
+      sendMessage(message);
+    });
 
     socket.on("disconnect", () => {
       removeUser(socket);

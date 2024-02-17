@@ -1,8 +1,8 @@
 import api from "./api";
 
 export const createMessage = async (data: {
-  chatId: string;
-  senderId: string;
+  chatId?: string;
+  senderId?: string;
   text: string;
 }) => {
   try {

@@ -1,8 +1,8 @@
 interface Chat {
   _id: string;
   members: string[];
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   __v: number;
 }
 
@@ -11,7 +11,7 @@ interface PotentialChat {
   name: string;
   email: string;
   password: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   __v: number;
 }

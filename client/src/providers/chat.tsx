@@ -26,6 +26,7 @@ interface ChatContext {
   currentChat: Chat | undefined;
   handleSendMessage: (data: CreateMessage) => void;
   onlineUsers: OnlineUser[];
+  setCurrentChat: (chat: Chat | undefined) => void;
 }
 
 interface OnlineUser {
@@ -75,7 +76,33 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         setOnlineUsers(users);
       });
     }
+
+    return () => {
+      socket?.off("getOnlineUsers");
+    };
   }, [socket, user]);
+
+  useEffect(() => {
+    if (socket) {
+      const recipientId = currentChat?.members.find((id) => id !== user?.id);
+
+      socket.emit("sendMessage", { ...newMessages, recipientId });
+    }
+  }, [newMessages, currentChat]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("getMessage", (message: Message) => {
+        if (currentChat?._id === message.chatId) {
+          setMessages((prev: any) => [...(prev || []), message]);
+        }
+      });
+    }
+
+    return () => {
+      socket?.off("getMessage");
+    };
+  }, [socket, currentChat, user]);
 
   const { mutate: createChatMutation } = useMutation(
     (data: ChatID) => createChat(data),
@@ -105,9 +132,10 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }
   );
 
-  function onCreateMessageSuccess(response: GenericRequest<Message>, data) {
-    console.log({ response, data });
-
+  function onCreateMessageSuccess(
+    response: GenericRequest<Message>,
+    data: CreateMessage
+  ) {
     if (response) {
       const { error } = response;
 
@@ -211,6 +239,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         currentChat,
         setUserChat,
         onlineUsers,
+        setCurrentChat,
         potentialChats,
         handleCreateChat,
         handleSendMessage,
