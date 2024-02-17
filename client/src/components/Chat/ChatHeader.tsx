@@ -1,4 +1,5 @@
 import { useAuth } from "@/providers/auth";
+import { useChat } from "@/providers/chat";
 import {
   Dropdown,
   DropdownItem,
@@ -10,6 +11,12 @@ import { LogOut } from "react-feather";
 
 export const ChatHeader: React.FC = () => {
   const { user, logout } = useAuth();
+  const { setCurrentChat } = useChat();
+
+  function handleLogout() {
+    logout();
+    setCurrentChat(undefined);
+  }
 
   return (
     <div className="flex items-center justify-between p-5 py-3 shadow">
@@ -38,7 +45,7 @@ export const ChatHeader: React.FC = () => {
           <DropdownItem
             className="text-danger"
             color="danger"
-            onPress={logout}
+            onPress={handleLogout}
             startContent={<LogOut />}
           >
             Sair
