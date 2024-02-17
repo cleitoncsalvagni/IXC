@@ -1,5 +1,6 @@
-import { GET_ALL_USERS, GET_CHATS } from "@/constants/queryKeys";
+import { GET_ALL_USERS, GET_CHATS, GET_MESSAGES } from "@/constants/queryKeys";
 import { createChat, getUserChat } from "@/services/chat";
+import { getMessages } from "@/services/message";
 import { getAllUsers } from "@/services/user";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
@@ -18,6 +19,10 @@ interface ChatContext {
   setUserChat: (chat: any) => void;
   potentialChats: PotentialChat[] | undefined;
   handleCreateChat: (data: ChatID) => void;
+  handleUpdateCurrentChat: (chat: Chat) => void;
+  messages: Message[] | undefined;
+  isLoadingMessages: boolean;
+  currentChat: Chat | undefined;
 }
 
 interface ChatID {
@@ -30,6 +35,8 @@ const ChatContext = createContext<ChatContext>({} as ChatContext);
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
   const [userChat, setUserChat] = useState<Chat[] | undefined>();
+  const [currentChat, setCurrentChat] = useState<Chat | undefined>();
+  const [messages, setMessages] = useState<Message[] | undefined>([]);
   const [potentialChats, setPotentialChats] = useState<
     PotentialChat[] | undefined
   >([]);
@@ -78,32 +85,58 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [potentialChatsSuccess, userChat]);
 
-  const { data, isFetching, isSuccess } = useQuery(
-    [GET_CHATS, user?.id],
-    () => getUserChat({ id: user!.id }),
+  const {
+    data: getUserChatData,
+    isSuccess: isGetUserChatSuccess,
+    isFetching: isGetUserChatFetching,
+  } = useQuery([GET_CHATS, user?.id], () => getUserChat({ id: user!.id }), {
+    enabled: !!user?.id,
+  });
+
+  useEffect(() => {
+    if (isGetUserChatSuccess) {
+      setUserChat(getUserChatData?.chats);
+    }
+  }, [isGetUserChatSuccess]);
+
+  const {
+    data: getMessagesData,
+    isSuccess: getMessagesSuccess,
+    isFetching: isGetMessagesFetching,
+  } = useQuery(
+    [GET_MESSAGES, currentChat?._id],
+    () => getMessages(currentChat?._id),
     {
-      enabled: !!user?.id,
+      enabled: !!currentChat?._id,
     }
   );
 
   useEffect(() => {
-    if (isSuccess) {
-      setUserChat(data?.chats);
+    if (getMessagesSuccess) {
+      setMessages(getMessagesData?.result);
     }
-  }, [isSuccess]);
+  }, [getMessagesSuccess, getMessagesData, currentChat?._id]);
 
   function handleCreateChat({ firstId, secondId }: ChatID) {
     mutate({ firstId, secondId });
   }
 
+  function handleUpdateCurrentChat(chat: Chat) {
+    setCurrentChat(chat);
+  }
+
   return (
     <ChatContext.Provider
       value={{
+        messages,
         userChat,
+        currentChat,
+        setUserChat,
         potentialChats,
         handleCreateChat,
-        isLoadingChats: isFetching,
-        setUserChat,
+        handleUpdateCurrentChat,
+        isLoadingChats: isGetUserChatFetching,
+        isLoadingMessages: isGetMessagesFetching,
       }}
     >
       {children}

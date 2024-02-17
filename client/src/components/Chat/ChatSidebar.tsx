@@ -6,14 +6,17 @@ import Image from "next/image";
 import { Send } from "react-feather";
 
 const RenderChat = ({ chat }: { chat: Chat }) => {
+  const { handleUpdateCurrentChat } = useChat();
   const { recipientUser } = useFetchRecipientUser(chat);
+  const { currentChat } = useChat();
 
   const sentByMe = false;
-  const isSelected = false;
-  const message = "";
+  const isSelected = chat._id === currentChat?._id;
+  const message = "mensagem";
 
   return (
     <div
+      onClick={() => handleUpdateCurrentChat(chat)}
       className={`flex items-center break-all cursor-pointer rounded-3xl p-3 px-4 ${
         isSelected ? "bg-blue-100" : "bg-zinc-100"
       } min-w-full`}

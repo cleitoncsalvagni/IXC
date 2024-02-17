@@ -4,7 +4,7 @@ import { findUser } from "@/services/user";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
-export function useFetchRecipientUser(chat: Chat) {
+export function useFetchRecipientUser(chat?: Chat) {
   const { user } = useAuth();
   const [recipientUser, setRecipientUser] = useState<User | undefined>();
 
@@ -18,7 +18,7 @@ export function useFetchRecipientUser(chat: Chat) {
     if (isSuccess) {
       setRecipientUser(data?.user);
     }
-  }, [isSuccess]);
+  }, [isSuccess, data]);
 
   return { recipientUser };
 }

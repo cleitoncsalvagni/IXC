@@ -1,6 +1,11 @@
+import { useFetchRecipientUser } from "@/hooks/useFetchRecipientUser";
+import { useChat } from "@/providers/chat";
 import Image from "next/image";
 
 export const ConversationHeader: React.FC = () => {
+  const { currentChat } = useChat();
+  const { recipientUser } = useFetchRecipientUser(currentChat);
+
   return (
     <div className="p-5 py-3 flex items-center ">
       <Image
@@ -12,7 +17,7 @@ export const ConversationHeader: React.FC = () => {
       />
 
       <div className="ml-4">
-        <h1 className="font-medium">Ana da Silva</h1>
+        <h1 className="font-medium">{recipientUser?.name}</h1>
 
         <div className="flex items-center mt-1 gap-1">
           <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full" />

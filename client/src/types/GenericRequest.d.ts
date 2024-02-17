@@ -5,4 +5,5 @@ interface GenericRequest<T> {
   users?: T;
   chat?: T;
   chats?: T;
+  result?: T;
 }
