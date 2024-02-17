@@ -1,8 +1,5 @@
-import dotenv from "dotenv";
 import { Request, Response } from "express";
 import { chatModel } from "../models/ChatModel";
-
-dotenv.config();
 
 const createChat = async (req: Request, res: Response) => {
   try {

@@ -1,10 +1,7 @@
 import bcrypt from "bcrypt";
-import dotenv from "dotenv";
 import { Request, Response } from "express";
 import { userModel } from "../models/UserModel";
 import { createJwtToken } from "../utils/createJwtToken";
-
-dotenv.config();
 
 const login = async (req: Request, res: Response) => {
   try {
