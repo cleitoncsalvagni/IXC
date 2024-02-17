@@ -1,6 +1,6 @@
 import { useAuth } from "@/providers/auth";
 import { useChat } from "@/providers/chat";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Send } from "react-feather";
 import { ConversationFooter } from "../Conversation/Footer";
 import { ConversationHeader } from "../Conversation/Header";
@@ -9,10 +9,13 @@ export const ChatConversation: React.FC = () => {
   const { user } = useAuth();
   const { messages, currentChat } = useChat();
 
+  const scroll = useRef<any>();
+
   useEffect(() => {
-    const conversation = document.getElementById("conversations");
-    conversation?.scrollTo(0, conversation.scrollHeight);
-  }, []);
+    if (scroll.current) {
+      scroll.current.scrollTop = scroll.current.scrollHeight;
+    }
+  }, [messages]);
 
   return (
     <div className="flex flex-col w-full">
@@ -21,7 +24,7 @@ export const ChatConversation: React.FC = () => {
           <ConversationHeader />
 
           <div
-            id="conversations"
+            ref={scroll}
             className="flex flex-col overflow-y-scroll bg-zinc-100 h-[50vh]"
           >
             {messages && messages.length > 0 ? (
