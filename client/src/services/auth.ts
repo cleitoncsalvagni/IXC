@@ -29,11 +29,14 @@ export const register = async ({
   password: string;
 }) => {
   try {
-    const response = await api.post<GenericRequest<User>>("register", {
-      name,
-      email,
-      password,
-    });
+    const response = await api.post<GenericRequest<GenericResponse>>(
+      "register",
+      {
+        name,
+        email,
+        password,
+      }
+    );
 
     return response.data;
   } catch (error: any) {

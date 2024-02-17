@@ -35,12 +35,6 @@ export const Register = async (req: Request, res: Response) => {
     res.status(200).json({
       error: false,
       message: "Cadastrado com sucesso!",
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        token,
-      },
     });
   } catch (error: any) {
     res.status(500).json({ error });

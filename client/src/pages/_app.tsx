@@ -22,7 +22,12 @@ export default function App({ Component, pageProps }: AppProps) {
         <Component {...pageProps} />
       </Providers>
 
-      <Toaster position="top-center" />
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          duration: 3000,
+        }}
+      />
     </>
   );
 }

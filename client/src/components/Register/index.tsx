@@ -1,8 +1,13 @@
+import { useAuth } from "@/providers/auth";
+import { register } from "@/services/auth";
 import { REGISTER_SCHEMA } from "@/utils/schemas";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { Spinner } from "@nextui-org/react";
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { Lock, Mail, User } from "react-feather";
 import { Controller, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { AuthHeader } from "../Shared/AuthHeader";
 import { FormInput } from "../Shared/FormInput";
 import { VisibilityPassSwitch } from "../Shared/VisibilityPassSwitch";
@@ -18,6 +23,7 @@ interface RegisterSchema {
 }
 
 export const Register: React.FC<RegisterProps> = ({ setContentMode }) => {
+  const { handleLogin, isLoginLoading } = useAuth();
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const {
@@ -28,9 +34,41 @@ export const Register: React.FC<RegisterProps> = ({ setContentMode }) => {
     resolver: yupResolver<RegisterSchema>(REGISTER_SCHEMA),
   });
 
-  function handleRegister({ name, email, password }: RegisterSchema) {
-    console.log(name, email, password);
+  const { mutate, isLoading: isRegisterLoading } = useMutation(
+    ({ name, email, password }: RegisterSchema) =>
+      register({
+        name,
+        email,
+        password,
+      }),
+    {
+      onSuccess,
+      onError,
+    }
+  );
+
+  function onSuccess(
+    response: GenericRequest<GenericResponse>,
+    data: RegisterSchema
+  ) {
+    if (response) {
+      const { error, message } = response;
+
+      if (!error) {
+        handleLogin(data);
+      } else {
+        toast.error(message);
+      }
+    }
   }
+
+  function onError() {
+    toast.error(
+      "Não foi possível realizar o cadastro. Tente novamente mais tarde."
+    );
+  }
+
+  const handleRegister = (data: RegisterSchema) => mutate(data);
 
   const handleVisiblePassword = () => {
     setPasswordVisible((prev) => !prev);
@@ -104,9 +142,13 @@ export const Register: React.FC<RegisterProps> = ({ setContentMode }) => {
 
           <button
             onClick={handleSubmit(handleRegister)}
-            className="flex items-center justify-center border-1 border-black rounded-full py-1 mt-4 hover:scale-105 transition-transform"
+            className="flex items-center justify-center border-1 border-black rounded-full py-1 mt-4 hover:scale-105 transition-transform min-h-9"
           >
-            <p className="font-semibold">Cadastrar</p>
+            {isLoginLoading || isRegisterLoading ? (
+              <Spinner color="current" size="sm" />
+            ) : (
+              <p className="font-semibold">Cadastrar</p>
+            )}
           </button>
         </div>
       </div>
