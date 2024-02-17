@@ -1,4 +1,5 @@
 import { useFetchRecipientUser } from "@/hooks/useFetchRecipientUser";
+import { useAuth } from "@/providers/auth";
 import { useChat } from "@/providers/chat";
 import { Spinner } from "@nextui-org/react";
 import Image from "next/image";
@@ -42,27 +43,39 @@ const RenderChat = ({ chat }: { chat: Chat }) => {
 const RenderPotentialChats = ({
   potentialChats,
 }: {
-  potentialChats: PotentialChat[];
+  potentialChats?: PotentialChat[];
 }) => {
+  const { user } = useAuth();
+  const { handleCreateChat } = useChat();
+
   return (
     <div className="flex flex-col w-full">
-      <div className="flex items-center gap-1 mb-1">
+      <div className="flex items-center gap-1">
         <Send size={15} className="text-primary" />
         <h1 className="text-xs font-medium text-primary">
           Contatos disponíveis
         </h1>
       </div>
       <div className="flex items-center gap-2 flex-wrap my-2">
-        {potentialChats
-          .sort((a, b) => a.name.localeCompare(b.name))
-          ?.map((chat, index) => (
-            <div
-              key={index}
-              className="flex items-center break-all cursor-pointer border p-1 px-2 shadow-md rounded-full border-zinc-300"
-            >
-              <h1 className="line-clamp-1 text-xs">{chat.name}</h1>
-            </div>
-          ))}
+        {potentialChats && potentialChats?.length > 0 ? (
+          potentialChats
+            .sort((a, b) => a.name.localeCompare(b.name))
+            ?.map((chat, index) => (
+              <div
+                key={index}
+                onClick={() =>
+                  handleCreateChat({ firstId: user?.id!, secondId: chat._id })
+                }
+                className="flex items-center break-all cursor-pointer border p-1 px-2 shadow-md rounded-full border-zinc-300"
+              >
+                <h1 className="line-clamp-1 text-xs">{chat.name}</h1>
+              </div>
+            ))
+        ) : (
+          <p className="text-[10px] text-zinc-400">
+            Já possui conversa com todos os usuários.
+          </p>
+        )}
       </div>
     </div>
   );
@@ -77,9 +90,7 @@ export const ChatSidebar: React.FC = () => {
         <Spinner />
       ) : (
         <>
-          {potentialChats && potentialChats?.length > 0 ? (
-            <RenderPotentialChats potentialChats={potentialChats} />
-          ) : null}
+          <RenderPotentialChats potentialChats={potentialChats} />
 
           {userChat && userChat?.length > 0 ? (
             userChat?.map((chat, index) => (

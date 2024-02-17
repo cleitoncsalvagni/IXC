@@ -1,7 +1,7 @@
 import { GET_ALL_USERS, GET_CHATS } from "@/constants/queryKeys";
-import { getUserChat } from "@/services/chat";
+import { createChat, getUserChat } from "@/services/chat";
 import { getAllUsers } from "@/services/user";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   ReactNode,
   createContext,
@@ -9,6 +9,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import toast from "react-hot-toast";
 import { useAuth } from "./auth";
 
 interface ChatContext {
@@ -16,6 +17,12 @@ interface ChatContext {
   isLoadingChats: boolean;
   setUserChat: (chat: any) => void;
   potentialChats: PotentialChat[] | undefined;
+  handleCreateChat: (data: ChatID) => void;
+}
+
+interface ChatID {
+  firstId: string;
+  secondId: string;
 }
 
 const ChatContext = createContext<ChatContext>({} as ChatContext);
@@ -26,6 +33,27 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [potentialChats, setPotentialChats] = useState<
     PotentialChat[] | undefined
   >([]);
+
+  const { mutate } = useMutation((data: ChatID) => createChat(data), {
+    onSuccess,
+    onError,
+  });
+
+  function onSuccess(response: GenericRequest<Chat>) {
+    if (response) {
+      const { error } = response;
+
+      if (!error) {
+        setUserChat((prev: any) => {
+          return [...(prev || []), response.chat];
+        });
+      }
+    }
+  }
+
+  function onError() {
+    toast.error("Verifique sua conexão com a internet e tente novamente.");
+  }
 
   const { data: potentialChatsData, isSuccess: potentialChatsSuccess } =
     useQuery([GET_ALL_USERS], () => getAllUsers());
@@ -64,11 +92,16 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [isSuccess]);
 
+  function handleCreateChat({ firstId, secondId }: ChatID) {
+    mutate({ firstId, secondId });
+  }
+
   return (
     <ChatContext.Provider
       value={{
         userChat,
         potentialChats,
+        handleCreateChat,
         isLoadingChats: isFetching,
         setUserChat,
       }}
