@@ -1,4 +1,3 @@
-import { useFetchRecipientUser } from "@/hooks/useFetchRecipientUser";
 import { useAuth } from "@/providers/auth";
 import { useChat } from "@/providers/chat";
 import { useEffect } from "react";
@@ -9,7 +8,6 @@ import { ConversationHeader } from "../Conversation/Header";
 export const ChatConversation: React.FC = () => {
   const { user } = useAuth();
   const { messages, currentChat } = useChat();
-  const { recipientUser } = useFetchRecipientUser(currentChat);
 
   useEffect(() => {
     const conversation = document.getElementById("conversations");

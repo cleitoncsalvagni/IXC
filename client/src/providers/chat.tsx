@@ -1,6 +1,6 @@
 import { GET_ALL_USERS, GET_CHATS, GET_MESSAGES } from "@/constants/queryKeys";
 import { createChat, getUserChat } from "@/services/chat";
-import { getMessages } from "@/services/message";
+import { createMessage, getMessages } from "@/services/message";
 import { getAllUsers } from "@/services/user";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
@@ -23,11 +23,19 @@ interface ChatContext {
   messages: Message[] | undefined;
   isLoadingMessages: boolean;
   currentChat: Chat | undefined;
+  handleSendMessage: (data: CreateMessage) => void;
 }
 
 interface ChatID {
   firstId: string;
   secondId: string;
+}
+
+interface CreateMessage {
+  chatId: string | undefined;
+  senderId: string | undefined;
+  text: string;
+  resetField: () => void;
 }
 
 const ChatContext = createContext<ChatContext>({} as ChatContext);
@@ -37,16 +45,20 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [userChat, setUserChat] = useState<Chat[] | undefined>();
   const [currentChat, setCurrentChat] = useState<Chat | undefined>();
   const [messages, setMessages] = useState<Message[] | undefined>([]);
+  const [newMessages, setNewMessages] = useState<Message | undefined>();
   const [potentialChats, setPotentialChats] = useState<
     PotentialChat[] | undefined
   >([]);
 
-  const { mutate } = useMutation((data: ChatID) => createChat(data), {
-    onSuccess,
-    onError,
-  });
+  const { mutate: createChatMutation } = useMutation(
+    (data: ChatID) => createChat(data),
+    {
+      onSuccess: onCreateChatSuccess,
+      onError,
+    }
+  );
 
-  function onSuccess(response: GenericRequest<Chat>) {
+  function onCreateChatSuccess(response: GenericRequest<Chat>) {
     if (response) {
       const { error } = response;
 
@@ -54,6 +66,31 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         setUserChat((prev: any) => {
           return [...(prev || []), response.chat];
         });
+      }
+    }
+  }
+
+  const { mutate: createMessageMutation } = useMutation(
+    (data: CreateMessage) => createMessage(data),
+    {
+      onSuccess: onCreateMessageSuccess,
+      onError,
+    }
+  );
+
+  function onCreateMessageSuccess(response: GenericRequest<Message>, data) {
+    console.log({ response, data });
+
+    if (response) {
+      const { error } = response;
+
+      if (!error) {
+        setNewMessages(response.result);
+        setMessages((prev: any) => [...(prev || []), response.result]);
+        data.resetField();
+
+        const chat = document.getElementById("conversations");
+        chat?.scrollTo(0, chat.scrollHeight);
       }
     }
   }
@@ -117,8 +154,22 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [getMessagesSuccess, getMessagesData, currentChat?._id]);
 
+  function handleSendMessage({
+    chatId,
+    senderId,
+    text,
+    resetField,
+  }: CreateMessage) {
+    createMessageMutation({
+      chatId,
+      senderId,
+      text,
+      resetField,
+    });
+  }
+
   function handleCreateChat({ firstId, secondId }: ChatID) {
-    mutate({ firstId, secondId });
+    createChatMutation({ firstId, secondId });
   }
 
   function handleUpdateCurrentChat(chat: Chat) {
@@ -134,6 +185,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         setUserChat,
         potentialChats,
         handleCreateChat,
+        handleSendMessage,
         handleUpdateCurrentChat,
         isLoadingChats: isGetUserChatFetching,
         isLoadingMessages: isGetMessagesFetching,

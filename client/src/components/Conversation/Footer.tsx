@@ -1,3 +1,5 @@
+import { useAuth } from "@/providers/auth";
+import { useChat } from "@/providers/chat";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ArrowRight } from "react-feather";
 import { Controller, useForm } from "react-hook-form";
@@ -9,16 +11,20 @@ const schema = Yup.object().shape({
 });
 
 export const ConversationFooter: React.FC = () => {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
+  const { user } = useAuth();
+  const { handleSendMessage, currentChat } = useChat();
+
+  const { control, handleSubmit, resetField, formState } = useForm({
     resolver: yupResolver(schema),
   });
 
-  function handleSendMessage(info: { chatMessage: string }) {
-    console.log(info);
+  function sendMessage(info: { chatMessage: string }) {
+    handleSendMessage({
+      chatId: currentChat?._id,
+      senderId: user?.id,
+      text: info.chatMessage,
+      resetField: () => resetField("chatMessage"),
+    });
   }
 
   return (
@@ -43,7 +49,7 @@ export const ConversationFooter: React.FC = () => {
 
       <div className="flex w-full justify-end m-2">
         <button
-          onClick={handleSubmit(handleSendMessage)}
+          onClick={handleSubmit(sendMessage)}
           className="flex items-center justify-center gap-2 hover:scale-105 transition-transform"
         >
           <p className="font-bold">Enviar</p>

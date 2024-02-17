@@ -13,7 +13,7 @@ const createMessage = async (req: Request, res: Response) => {
 
     const response = await message.save();
 
-    res.status(200).json({ error: false, message: response });
+    res.status(200).json({ error: false, result: response });
   } catch (error) {
     res.status(500).json({ error });
   }
