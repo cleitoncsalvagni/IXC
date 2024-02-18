@@ -54,12 +54,12 @@ const RenderPotentialChats = ({
   const { handleCreateChat, onlineUsers } = useChat();
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col p-5 w-full">
       <div className="flex items-center gap-1">
         <Send size={15} className="text-primary" />
         <h1 className="text-xs font-medium text-primary">Contatos</h1>
       </div>
-      <div className="flex items-center gap-2 flex-wrap my-2">
+      <div className="flex items-center gap-2 flex-wrap my-2  ">
         {potentialChats && potentialChats?.length > 0 ? (
           potentialChats
             .sort((a, b) => a.name.localeCompare(b.name))
@@ -92,22 +92,24 @@ export const ChatSidebar: React.FC = () => {
   const { userChat, isLoadingChats, potentialChats } = useChat();
 
   return (
-    <div className="flex flex-col w-5/12 p-5 items-center gap-3 ">
+    <div className="flex flex-col w-5/12  items-center max-h-[80vh]">
       {isLoadingChats ? (
         <Spinner className="fade-in" />
       ) : (
         <>
           <RenderPotentialChats potentialChats={potentialChats} />
 
-          {userChat && userChat?.length > 0 ? (
-            userChat?.map((chat, index) => (
-              <RenderChat key={index} chat={chat} />
-            ))
-          ) : (
-            <p className="text-xs text-zinc-400 mt-10">
-              Você ainda não começou nenhuma conversa. 👀
-            </p>
-          )}
+          <div className="flex flex-col w-full overflow-y-scroll gap-3 px-5 scrollbar-hide pb-3">
+            {userChat && userChat?.length > 0 ? (
+              userChat?.map((chat, index) => (
+                <RenderChat key={index} chat={chat} />
+              ))
+            ) : (
+              <p className="text-xs text-zinc-400 mt-10">
+                Você ainda não começou nenhuma conversa. 👀
+              </p>
+            )}
+          </div>
         </>
       )}
     </div>

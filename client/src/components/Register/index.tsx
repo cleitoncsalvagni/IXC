@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Lock, Mail, User } from "react-feather";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { io } from "socket.io-client";
 import { AuthHeader } from "../Shared/AuthHeader";
 import { FormInput } from "../Shared/FormInput";
 import { VisibilityPassSwitch } from "../Shared/VisibilityPassSwitch";
@@ -47,14 +48,14 @@ export const Register: React.FC<RegisterProps> = ({ setContentMode }) => {
     }
   );
 
-  function onSuccess(
-    response: GenericRequest<GenericResponse>,
-    data: RegisterSchema
-  ) {
+  function onSuccess(response: GenericRequest<User>, data: RegisterSchema) {
     if (response) {
-      const { error, message } = response;
+      const { error, message, user } = response;
 
       if (!error) {
+        const socket = io("http://localhost:5173");
+        socket.emit("addNewUser", user?.id);
+
         handleLogin(data);
       } else {
         toast.error(message);
@@ -68,7 +69,14 @@ export const Register: React.FC<RegisterProps> = ({ setContentMode }) => {
     );
   }
 
-  const handleRegister = (data: RegisterSchema) => mutate(data);
+  const handleRegister = (data: RegisterSchema) => {
+    const params = {
+      ...data,
+      saveLogin: true,
+    };
+
+    return mutate(params);
+  };
 
   const handleVisiblePassword = () => {
     setPasswordVisible((prev) => !prev);

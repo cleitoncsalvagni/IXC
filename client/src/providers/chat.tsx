@@ -11,8 +11,8 @@ import {
   useState,
 } from "react";
 import toast from "react-hot-toast";
-import { io } from "socket.io-client";
 import { useAuth } from "./auth";
+import { useSocket } from "./socket";
 
 interface ChatContext {
   userChat: Chat[] | undefined;
@@ -52,30 +52,21 @@ const ChatContext = createContext<ChatContext>({} as ChatContext);
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
+  const { socket } = useSocket();
   const [userChat, setUserChat] = useState<Chat[] | undefined>();
   const [currentChat, setCurrentChat] = useState<Chat | undefined>();
   const [messages, setMessages] = useState<Message[] | undefined>([]);
   const [newMessages, setNewMessages] = useState<Message | undefined>();
   const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([]);
-  const [socket, setSocket] = useState<any>();
   const [allUsers, setAllUsers] = useState<PotentialChat[] | undefined>([]);
   const [potentialChats, setPotentialChats] = useState<
     PotentialChat[] | undefined
   >([]);
 
   useEffect(() => {
-    const newSocket = io("http://127.0.0.1:5173");
-    setSocket(newSocket);
-
-    return () => {
-      newSocket?.disconnect();
-    };
-  }, [user]);
-
-  useEffect(() => {
     if (socket && user) {
-      socket.emit("addNewUser", user?.id);
-      socket.on("getOnlineUsers", (users: OnlineUser[]) => {
+      socket?.emit("addNewUser", user?.id);
+      socket?.on("getOnlineUsers", (users: OnlineUser[]) => {
         setOnlineUsers(users);
       });
     }
@@ -88,14 +79,15 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (socket) {
       const recipientId = currentChat?.members.find((id) => id !== user?.id);
-
-      socket.emit("sendMessage", { ...newMessages, recipientId });
+      socket?.emit("sendMessage", { ...newMessages, recipientId });
     }
-  }, [newMessages, currentChat]);
+  }, [newMessages, currentChat, socket, user?.id]);
 
   useEffect(() => {
     if (socket) {
-      socket.on("getMessage", (message: Message) => {
+      socket?.on("getMessage", (message: Message) => {
+        console.log({ message });
+
         if (currentChat?._id === message.chatId) {
           setMessages((prev: any) => [...(prev || []), message]);
         }
@@ -155,7 +147,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const { data: potentialChatsData, isSuccess: potentialChatsSuccess } =
-    useQuery([GET_ALL_USERS, user?.id], () => getAllUsers());
+    useQuery([GET_ALL_USERS, user?.id, onlineUsers], () => getAllUsers());
 
   useEffect(() => {
     if (potentialChatsSuccess) {

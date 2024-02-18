@@ -11,6 +11,7 @@ import {
   useState,
 } from "react";
 import toast from "react-hot-toast";
+import { useSocket } from "./socket";
 
 interface AuthContext {
   user: User | undefined;
@@ -24,6 +25,7 @@ interface AuthContext {
 const AuthContext = createContext<AuthContext>({} as AuthContext);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const { socket } = useSocket();
   const [user, setUser] = useState<User>();
   const router = useRouter();
 
@@ -58,6 +60,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         setUser(user);
         router.replace("/chat");
+        socket?.emit("addNewUser", user?.id);
         toast.success(message);
       } else {
         toast.error(message);

@@ -33,12 +33,14 @@ export const ChatConversation: React.FC = () => {
             {messages && messages.length > 0 ? (
               messages?.map((item, index) => {
                 const sendBySelf = item.senderId === user?.id;
-                const formattedDate = format(
-                  parseISO(item.createdAt),
-                  isToday(parseISO(item.createdAt))
-                    ? "'Hoje,' HH:mm"
-                    : "dd/MM/yyyy HH:mm"
-                );
+                const formattedDate = item.createdAt
+                  ? format(
+                      parseISO(item.createdAt),
+                      isToday(parseISO(item.createdAt))
+                        ? "'Hoje,' HH:mm"
+                        : "dd/MM/yyyy HH:mm"
+                    )
+                  : "";
 
                 return (
                   <div

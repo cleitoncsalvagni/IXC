@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { AuthProvider } from "./auth";
 import { ChatProvider } from "./chat";
+import { SocketProvider } from "./socket";
 
 const queryClient = new QueryClient(queryConfig);
 
@@ -17,9 +18,11 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <NextUIProvider>
-        <AuthProvider>
-          <ChatProvider>{mounted ? children : null}</ChatProvider>
-        </AuthProvider>
+        <SocketProvider>
+          <AuthProvider>
+            <ChatProvider>{mounted ? children : null}</ChatProvider>
+          </AuthProvider>
+        </SocketProvider>
       </NextUIProvider>
     </QueryClientProvider>
   );
