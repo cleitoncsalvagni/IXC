@@ -146,9 +146,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         setNewMessages(response.result);
         setMessages((prev: any) => [...(prev || []), response.result]);
         data.resetField();
-
-        const chat = document.getElementById("conversations");
-        chat?.scrollTo(0, chat.scrollHeight);
       }
     }
   }
