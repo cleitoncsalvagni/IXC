@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const user = getUserCredentials();
 
     if (user) {
-      setUser(user);
+      handleLogin(user);
     }
   }, []);
 
@@ -48,7 +48,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (!error) {
         if (data.saveLogin) {
-          storeUserCredentials(user!);
+          const saveLogin = {
+            ...user!,
+            password: data.password,
+          };
+
+          storeUserCredentials(saveLogin);
         }
 
         setUser(user);
@@ -63,15 +68,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   function onError() {
     toast.dismiss();
 
+    router.replace("/");
+
     return toast.error(
       "Não foi possível concluir a operação, tente novamente mais tarde!"
     );
   }
 
   function logout() {
+    router.replace("/");
     localStorage.removeItem("user");
     setUser(undefined);
-    router.replace("/");
   }
 
   function getUserCredentials() {

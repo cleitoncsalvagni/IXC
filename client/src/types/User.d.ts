@@ -4,4 +4,5 @@ interface User {
   email: string;
   token: string;
   image: string;
+  password?: string;
 }
