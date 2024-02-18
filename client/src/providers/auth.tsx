@@ -40,15 +40,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     { onSuccess, onError }
   );
 
-  function onSuccess(response: GenericRequest<User>) {
+  function onSuccess(response: GenericRequest<User>, data: AuthSchema) {
     toast.dismiss();
 
     if (response) {
       const { error, message, user } = response;
 
       if (!error) {
+        if (data.saveLogin) {
+          storeUserCredentials(user!);
+        }
+
         setUser(user);
-        storeUserCredentials(user!);
         router.replace("/chat");
         toast.success(message);
       } else {

@@ -35,6 +35,15 @@ export const Login: React.FC<LoginProps> = ({ setContentMode }) => {
     setPasswordVisible((prev) => !prev);
   };
 
+  const login = (data: AuthSchema) => {
+    const params = {
+      ...data,
+      saveLogin,
+    };
+
+    handleLogin(params);
+  };
+
   return (
     <div className="fadeIn flex flex-col justify-between bg shadow-xl bg-white rounded-3xl min-w-96">
       <div className="p-10 px-28 pt-16">
@@ -94,7 +103,7 @@ export const Login: React.FC<LoginProps> = ({ setContentMode }) => {
 
           <button
             disabled={isLoginLoading}
-            onClick={handleSubmit(handleLogin)}
+            onClick={handleSubmit(login)}
             className="group flex items-center justify-center gap-3 border-1 border-black rounded-full py-1 mt-2 hover:scale-105 transition-transform min-h-9"
           >
             {isLoginLoading ? (
