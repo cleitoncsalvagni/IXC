@@ -45,7 +45,7 @@ export const Login: React.FC<LoginProps> = ({ setContentMode }) => {
   };
 
   return (
-    <div className="fadeIn flex flex-col justify-between bg shadow-xl bg-white rounded-3xl min-w-96">
+    <div className="fade-in flex flex-col justify-between bg shadow-xl bg-white rounded-3xl min-w-96">
       <div className="p-10 px-28 pt-16">
         <AuthHeader
           title="Acesse sua conta"
@@ -107,11 +107,11 @@ export const Login: React.FC<LoginProps> = ({ setContentMode }) => {
             className="group flex items-center justify-center gap-3 border-1 border-black rounded-full py-1 mt-2 hover:scale-105 transition-transform min-h-9"
           >
             {isLoginLoading ? (
-              <Spinner color="current" size="sm" />
+              <Spinner color="current" size="sm" className="fade-in" />
             ) : (
               <>
-                <p className="font-semibold">Acessar</p>
-                <div className="flex group transition-transform transform group-hover:translate-x-2">
+                <p className="fade-in font-semibold">Acessar</p>
+                <div className="fade-in flex group transition-transform transform group-hover:translate-x-2">
                   <ArrowRight size={18} />
                 </div>
               </>

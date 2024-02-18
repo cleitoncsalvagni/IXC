@@ -75,7 +75,7 @@ export const Register: React.FC<RegisterProps> = ({ setContentMode }) => {
   };
 
   return (
-    <div className="fadeIn flex flex-col justify-between bg shadow-xl bg-white rounded-3xl">
+    <div className="fade-in flex flex-col justify-between bg shadow-xl bg-white rounded-3xl">
       <div className="p-10 px-28 pt-16">
         <AuthHeader
           title="Crie sua conta"
@@ -145,9 +145,9 @@ export const Register: React.FC<RegisterProps> = ({ setContentMode }) => {
             className="flex items-center justify-center border-1 border-black rounded-full py-1 mt-4 hover:scale-105 transition-transform min-h-9"
           >
             {isLoginLoading || isRegisterLoading ? (
-              <Spinner color="current" size="sm" />
+              <Spinner color="current" size="sm" className="fade-in" />
             ) : (
-              <p className="font-semibold">Cadastrar</p>
+              <p className="fade-in font-semibold">Cadastrar</p>
             )}
           </button>
         </div>

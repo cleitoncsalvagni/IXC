@@ -69,7 +69,7 @@ const RenderPotentialChats = ({
                 onClick={() =>
                   handleCreateChat({ firstId: user?.id!, secondId: u._id })
                 }
-                className="flex items-center break-all cursor-pointer border p-1 px-2 shadow-md rounded-full border-zinc-300"
+                className="fade-in flex items-center break-all cursor-pointer border p-1 px-2 shadow-md rounded-full border-zinc-300"
               >
                 <h1 className="line-clamp-1 text-xs">{u.name}</h1>
 
@@ -79,7 +79,7 @@ const RenderPotentialChats = ({
               </div>
             ))
         ) : (
-          <p className="text-[10px] text-zinc-400">
+          <p className="fade-in text-[10px] text-zinc-400">
             Não há contatos no momento.
           </p>
         )}
@@ -94,7 +94,7 @@ export const ChatSidebar: React.FC = () => {
   return (
     <div className="flex flex-col w-5/12 p-5 items-center gap-3 ">
       {isLoadingChats ? (
-        <Spinner />
+        <Spinner className="fade-in" />
       ) : (
         <>
           <RenderPotentialChats potentialChats={potentialChats} />
