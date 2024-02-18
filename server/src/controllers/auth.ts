@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
-import { userModel } from "../models/UserModel";
+import { userModel } from "../models/userModel";
 import { createJwtToken } from "../utils/createJwtToken";
 
 const login = async (req: Request, res: Response) => {
