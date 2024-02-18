@@ -27,6 +27,8 @@ interface ChatContext {
   handleSendMessage: (data: CreateMessage) => void;
   onlineUsers: OnlineUser[];
   setCurrentChat: (chat: Chat | undefined) => void;
+  allUsers: PotentialChat[] | undefined;
+  newMessages: Message | undefined;
 }
 
 interface OnlineUser {
@@ -56,6 +58,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [newMessages, setNewMessages] = useState<Message | undefined>();
   const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([]);
   const [socket, setSocket] = useState<any>();
+  const [allUsers, setAllUsers] = useState<PotentialChat[] | undefined>([]);
   const [potentialChats, setPotentialChats] = useState<
     PotentialChat[] | undefined
   >([]);
@@ -155,7 +158,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const { data: potentialChatsData, isSuccess: potentialChatsSuccess } =
-    useQuery([GET_ALL_USERS], () => getAllUsers());
+    useQuery([GET_ALL_USERS, user?.id], () => getAllUsers());
 
   useEffect(() => {
     if (potentialChatsSuccess) {
@@ -174,6 +177,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       });
 
       setPotentialChats(pChats);
+      setAllUsers(potentialChatsData?.users);
     }
   }, [potentialChatsSuccess, userChat]);
 
@@ -236,6 +240,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       value={{
         messages,
         userChat,
+        allUsers,
+        newMessages,
         currentChat,
         setUserChat,
         onlineUsers,
