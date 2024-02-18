@@ -1,6 +1,6 @@
 import { useFetchRecipientUser } from "@/hooks/useFetchRecipientUser";
 import { useChat } from "@/providers/chat";
-import Image from "next/image";
+import { Avatar } from "@nextui-org/react";
 
 export const ConversationHeader: React.FC = () => {
   const { currentChat, onlineUsers } = useChat();
@@ -12,13 +12,7 @@ export const ConversationHeader: React.FC = () => {
 
   return (
     <div className="p-5 py-3 flex items-center ">
-      <Image
-        src="/img/avatar2.jpg"
-        alt="User"
-        width={100}
-        height={100}
-        className="h-14 w-14 rounded-full object-cover"
-      />
+      <Avatar name={recipientUser?.name || ""} size="lg" />
 
       <div className="ml-4">
         <h1 className="font-medium">{recipientUser?.name}</h1>

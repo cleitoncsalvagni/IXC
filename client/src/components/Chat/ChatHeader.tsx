@@ -1,12 +1,12 @@
 import { useAuth } from "@/providers/auth";
 import { useChat } from "@/providers/chat";
 import {
+  Avatar,
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/react";
-import Image from "next/image";
 import { LogOut } from "react-feather";
 
 export const ChatHeader: React.FC = () => {
@@ -32,13 +32,7 @@ export const ChatHeader: React.FC = () => {
               <p className="text-sm text-zinc-400">{user?.email}</p>
             </div>
 
-            <Image
-              alt="User"
-              src="/img/avatar.jpg"
-              width={50}
-              height={50}
-              className="rounded-full ml-5 object-cover"
-            />
+            <Avatar name={user?.name || ""} className="ml-5" />
           </div>
         </DropdownTrigger>
         <DropdownMenu aria-label="Static Actions">

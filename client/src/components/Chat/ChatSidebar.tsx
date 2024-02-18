@@ -1,18 +1,19 @@
+import { useFetchLastMessage } from "@/hooks/useFetchLastMessage";
 import { useFetchRecipientUser } from "@/hooks/useFetchRecipientUser";
 import { useAuth } from "@/providers/auth";
 import { useChat } from "@/providers/chat";
-import { Spinner } from "@nextui-org/react";
-import Image from "next/image";
+import { Avatar, Spinner } from "@nextui-org/react";
 import { Send } from "react-feather";
 
 const RenderChat = ({ chat }: { chat: Chat }) => {
+  const { user } = useAuth();
   const { handleUpdateCurrentChat } = useChat();
   const { recipientUser } = useFetchRecipientUser(chat);
+  const { latestMessage } = useFetchLastMessage(chat);
   const { currentChat } = useChat();
 
-  const sentByMe = false;
+  const sentByMe = latestMessage?.senderId === user?.id;
   const isSelected = chat._id === currentChat?._id;
-  const message = "mensagem";
 
   return (
     <div
@@ -21,23 +22,24 @@ const RenderChat = ({ chat }: { chat: Chat }) => {
         isSelected ? "bg-blue-100" : "bg-zinc-100"
       } min-w-full`}
     >
-      <Image
-        src="/img/avatar2.jpg"
-        alt="User"
-        width={100}
-        height={100}
-        className="h-12 w-12 rounded-full object-cover"
-      />
+      <Avatar name={recipientUser?.name || ""} size="lg" />
 
       <div className="flex flex-1 flex-col ml-3">
         <h1 className="line-clamp-1">{recipientUser?.name}</h1>
-        <p
-          className={`line-clamp-1 text-xs text-zinc-400 ${
-            sentByMe && "italic"
-          }`}
-        >
-          {sentByMe && "Você enviou:"} {message}
-        </p>
+
+        {latestMessage?.text ? (
+          <p
+            className={`line-clamp-1 text-xs text-zinc-400 ${
+              sentByMe && "italic"
+            }`}
+          >
+            {sentByMe && "Você enviou:"} {latestMessage?.text}
+          </p>
+        ) : (
+          <p className="text-xs text-zinc-400">
+            Clique para inicar a conversa.
+          </p>
+        )}
       </div>
     </div>
   );
@@ -55,9 +57,7 @@ const RenderPotentialChats = ({
     <div className="flex flex-col w-full">
       <div className="flex items-center gap-1">
         <Send size={15} className="text-primary" />
-        <h1 className="text-xs font-medium text-primary">
-          Contatos disponíveis
-        </h1>
+        <h1 className="text-xs font-medium text-primary">Contatos</h1>
       </div>
       <div className="flex items-center gap-2 flex-wrap my-2">
         {potentialChats && potentialChats?.length > 0 ? (
@@ -80,7 +80,7 @@ const RenderPotentialChats = ({
             ))
         ) : (
           <p className="text-[10px] text-zinc-400">
-            Já possui conversa com todos os usuários.
+            Não há contatos no momento.
           </p>
         )}
       </div>

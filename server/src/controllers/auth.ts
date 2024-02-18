@@ -39,6 +39,7 @@ const login = async (req: Request, res: Response) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        image: user.image,
         token,
       },
     });
@@ -66,7 +67,7 @@ const register = async (req: Request, res: Response) => {
         .json({ error: true, message: "Este email já possui um cadastro!" });
     }
 
-    user = new userModel({ name, email, password });
+    user = new userModel({ name, email, password, image: "" });
 
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
@@ -114,6 +115,7 @@ const findUser = async (req: Request, res: Response) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        image: user.image,
       },
     });
   } catch (error: any) {
