@@ -1,9 +1,10 @@
+import { useAuth } from "@/providers/auth";
+import { LOGIN_SCHEMA } from "@/utils/schemas";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Checkbox } from "@nextui-org/react";
+import { Checkbox, Spinner } from "@nextui-org/react";
 import { useState } from "react";
 import { ArrowRight, Lock, Mail } from "react-feather";
 import { Controller, useForm } from "react-hook-form";
-import * as Yup from "yup";
 import { AuthHeader } from "../Shared/AuthHeader";
 import { FormInput } from "../Shared/FormInput";
 import { VisibilityPassSwitch } from "../Shared/VisibilityPassSwitch";
@@ -12,16 +13,13 @@ interface LoginProps {
   setContentMode: (mode: "login" | "register") => void;
 }
 
-const schema = Yup.object().shape({
-  email: Yup.string()
-    .email("E-mail inválido")
-    .required("E-mail precisa ser preenchido"),
-  password: Yup.string()
-    .min(8, "A senha precisa conter no minímo 8 caracteres")
-    .required("Senha precisa ser preenchida"),
-});
+interface LoginSchema {
+  email: string;
+  password: string;
+}
 
 export const Login: React.FC<LoginProps> = ({ setContentMode }) => {
+  const { handleLogin, isLoginLoading } = useAuth();
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [saveLogin, setSaveLogin] = useState(true);
 
@@ -30,25 +28,24 @@ export const Login: React.FC<LoginProps> = ({ setContentMode }) => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver<AuthSchema>(schema),
+    resolver: yupResolver<LoginSchema>(LOGIN_SCHEMA),
   });
-
-  function handleLogin(info: { email: string; password: string }) {
-    const params = {
-      email: info.email,
-      password: info.password,
-      mustSaveLogin: saveLogin ? 1 : 0,
-    };
-
-    console.log(params);
-  }
 
   const handleVisiblePassword = () => {
     setPasswordVisible((prev) => !prev);
   };
 
+  const login = (data: AuthSchema) => {
+    const params = {
+      ...data,
+      saveLogin,
+    };
+
+    handleLogin(params);
+  };
+
   return (
-    <div className="fadeIn flex flex-col justify-between bg shadow-xl bg-white rounded-3xl min-w-96">
+    <div className="fade-in flex flex-col justify-between bg shadow-xl bg-white rounded-3xl min-w-96">
       <div className="p-10 px-28 pt-16">
         <AuthHeader
           title="Acesse sua conta"
@@ -105,13 +102,20 @@ export const Login: React.FC<LoginProps> = ({ setContentMode }) => {
           </Checkbox>
 
           <button
-            onClick={handleSubmit(handleLogin)}
-            className="group flex items-center justify-center gap-3 border-1 border-black rounded-full py-1 mt-2 hover:scale-105 transition-transform"
+            disabled={isLoginLoading}
+            onClick={handleSubmit(login)}
+            className="group flex items-center justify-center gap-3 border-1 border-black rounded-full py-1 mt-2 hover:scale-105 transition-transform min-h-9"
           >
-            <p className="font-semibold">Acessar</p>
-            <div className="flex group transition-transform transform group-hover:translate-x-2">
-              <ArrowRight size={18} />
-            </div>
+            {isLoginLoading ? (
+              <Spinner color="current" size="sm" className="fade-in" />
+            ) : (
+              <>
+                <p className="fade-in font-semibold">Acessar</p>
+                <div className="fade-in flex group transition-transform transform group-hover:translate-x-2">
+                  <ArrowRight size={18} />
+                </div>
+              </>
+            )}
           </button>
         </div>
       </div>

@@ -1,0 +1,88 @@
+export const mockConversation = [
+  {
+    id: 1,
+    message: "Olá, tudo bem?",
+    date: "Hoje",
+    time: "10:00",
+    sender_id: 1,
+  },
+  {
+    id: 2,
+    message: "Tudo sim, e você?",
+    date: "Hoje",
+    time: "10:00",
+    sender_id: 2,
+  },
+  {
+    id: 3,
+    message: "Tudo ótimo, obrigada por perguntar!",
+    date: "Hoje",
+    time: "10:00",
+    sender_id: 1,
+  },
+  {
+    id: 4,
+    message: "Olá, tudo bem?",
+    date: "Hoje",
+    time: "10:00",
+    sender_id: 1,
+  },
+  {
+    id: 5,
+    message: "Tudo sim, e você?",
+    date: "Hoje",
+    time: "10:00",
+    sender_id: 2,
+  },
+  {
+    id: 6,
+    message: "Tudo ótimo, obrigada por perguntar!",
+    date: "Hoje",
+    time: "10:00",
+    sender_id: 1,
+  },
+  {
+    id: 7,
+    message: "Olá, tudo bem?",
+    date: "Hoje",
+    time: "10:00",
+    sender_id: 1,
+  },
+  {
+    id: 8,
+    message: "Tudo sim, e você?",
+    date: "Hoje",
+    time: "10:00",
+    sender_id: 2,
+  },
+  {
+    id: 9,
+    message: "Tudo ótimo, obrigada por perguntar!",
+    date: "Hoje",
+    time: "10:00",
+    sender_id: 1,
+  },
+  {
+    id: 10,
+    message: "Tudo ótimo, obrigada por perguntar!",
+    date: "Hoje",
+    time: "10:00",
+    sender_id: 1,
+  },
+  {
+    id: 11,
+    message:
+      "Tudo ótimo, obrigada por perguntar, eu gostaria de ver contigo sobre o projeto que estamos trabalhando, aquele aplicativo React Native ele tem que ser entregue até o final do mês, você acha que consegue entregar?",
+    date: "Hoje",
+    time: "10:00",
+    sender_id: 1,
+  },
+  {
+    id: 12,
+    message:
+      "Sim, eu consigo entregar sim, sem problemas! Porém eu preciso de mais alguns dias para finalizar tudo, eu acho que consigo entregar até o dia 10 do próximo mês, tudo bem para você?",
+    date: "Hoje",
+    time: "10:00",
+    sender_id: 2,
+  },
+];

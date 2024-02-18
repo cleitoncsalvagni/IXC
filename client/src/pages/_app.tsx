@@ -2,6 +2,7 @@ import Providers from "@/providers";
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import Head from "next/head";
+import { Toaster } from "react-hot-toast";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -20,6 +21,13 @@ export default function App({ Component, pageProps }: AppProps) {
       <Providers>
         <Component {...pageProps} />
       </Providers>
+
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          duration: 3000,
+        }}
+      />
     </>
   );
 }
