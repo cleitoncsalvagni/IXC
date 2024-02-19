@@ -1,4 +1,5 @@
 import { useAuth } from "@/providers/auth";
+import { useSocket } from "@/providers/socket";
 import { register } from "@/services/auth";
 import { REGISTER_SCHEMA } from "@/utils/schemas";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -8,7 +9,6 @@ import { useState } from "react";
 import { Lock, Mail, User } from "react-feather";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { io } from "socket.io-client";
 import { AuthHeader } from "../Shared/AuthHeader";
 import { FormInput } from "../Shared/FormInput";
 import { VisibilityPassSwitch } from "../Shared/VisibilityPassSwitch";
@@ -24,6 +24,7 @@ interface RegisterSchema {
 }
 
 export const Register: React.FC<RegisterProps> = ({ setContentMode }) => {
+  const { socket } = useSocket();
   const { handleLogin, isLoginLoading } = useAuth();
   const [passwordVisible, setPasswordVisible] = useState(false);
 
@@ -53,7 +54,6 @@ export const Register: React.FC<RegisterProps> = ({ setContentMode }) => {
       const { error, message, user } = response;
 
       if (!error) {
-        const socket = io("http://localhost:5173");
         socket.emit("addNewUser", user?.id);
 
         handleLogin(data);
