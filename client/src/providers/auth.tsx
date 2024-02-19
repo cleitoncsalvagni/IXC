@@ -80,6 +80,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   function logout() {
     router.replace("/");
+    socket.disconnect();
     localStorage.removeItem("user");
     setUser(undefined);
   }
